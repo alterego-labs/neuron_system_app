@@ -3,11 +3,11 @@ defmodule NeuronSystem.Models.Neuron do
 
   @type t :: %__MODULE__{}
 
-  alias NeuronSystem.Utils.ProcessIdGenerator
+  alias NeuronSystem.Utils.CommonHelper
 
   @spec build((... -> any)) :: __MODULE__.t
   def build(activation_function) do
-    id = ProcessIdGenerator.call("neuron")
+    id = CommonHelper.gen_process_id("neuron")
     %__MODULE__{
       activation_function: activation_function,
       id: id

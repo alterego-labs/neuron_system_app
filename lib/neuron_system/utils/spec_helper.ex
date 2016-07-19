@@ -9,6 +9,7 @@ defmodule NeuronSystem.Utils.SpecHelper do
   import Supervisor.Spec
 
   alias NeuronSystem.Models
+  alias NeuronSystem.Utils.CommonHelper
 
   @doc """
   Builds worker specification for a neuron's process.
@@ -59,12 +60,8 @@ defmodule NeuronSystem.Utils.SpecHelper do
 
   @spec build_supervisor_spec(module, list, binary) :: Supervisor.Spec.spec
   def build_supervisor_spec(module, args, id_suffix) do
-    supervisor_id = id_suffix |> gen_process_id
+    supervisor_id = id_suffix |> CommonHelper.gen_process_id
     supervisor_spec = supervisor(module, args, [id: supervisor_id])
     {:ok, supervisor_spec}
-  end
-
-  def gen_process_id(suffix) do
-    NeuronSystem.Utils.ProcessIdGenerator.call(suffix)
   end
 end
