@@ -1,8 +1,44 @@
 defmodule NeuronSystem.Net do
+  @moduledoc """
+  Encapsulates the all logic for the Net term in the current domain.
+
+  The main abilities, that are provided by this module, are:
+
+  1. Create new Net
+  2. Add neuron to the Net
+  3. Detect neurons repo of the Net
+  4. Detect connection manager of the Net
+
+  During a lifecycle of the Net the bunch of the processes are spawned. For example,
+
+  ```
+                               |0.100.0|  <- net's supervisor process
+           _______________________|____________________________________________
+          |                 |                          |                       |
+      |0.101.0|         |0.102.0|                  |0.103.0|              |0.104.0|
+
+    neurons repo      connection manager          neuron #1              neuron #2
+     process           process                     process                process
+   ```
+  """
+
   import NeuronSystem.Utils.SpecHelper
 
   alias NeuronSystem.{Models, Processes}
 
+  @doc """
+  Creates new Neuron Net.
+
+  Under the hood it creates new supervisor for the net, which is supervised by the root application
+  supervisor. As net supervisor the `NeuronSystem.Processes.Net` module is used.
+
+  ## Examples
+
+  ```elixir
+  net = NeuronSystem.Net.create
+  # => %NeuronSystem.Models.Net{pid: #PID<0.104.0>}
+  ```
+  """
   @spec create() :: Models.Net.t
   def create do
     {:ok, supervisor_spec} = build_supervisor_spec(
@@ -14,6 +50,17 @@ defmodule NeuronSystem.Net do
     %Models.Net{pid: pid}
   end
 
+  @doc """
+  Adds new neuron to the concrete net with the specified activation function
+
+  ## Examples
+    
+  ```elixir
+  net = NeuronSystem.Net.create
+  neuron = NeuronSystem.Net.add_neuron(net)
+  # => %NeuronSystem.Models.Neuron{activation_function: #Function<20.54118792/0 in :erl_eval.expr/5>, id: "1468929430:neuron"}
+  ```
+  """
   @spec add_neuron(Models.Net.t, (... -> any)) :: Models.Neuron.t
   def add_neuron(%Models.Net{pid: net_pid}, activation_function) do
     neuron_model = Models.Neuron.build(activation_function)
@@ -22,11 +69,33 @@ defmodule NeuronSystem.Net do
     neuron_model
   end
 
+  @doc """
+  Returns a PID of the neurons repo server process.
+
+  ## Examples
+  
+  ```elixir
+  net = NeuronSystem.Net.create
+  NeuronSystem.Net.neurons_repo(net)
+  # => #PID<0.106.0>
+  ```
+  """
   @spec neurons_repo(Models.Net.t) :: pid | nil
   def neurons_repo(%Models.Net{pid: net_pid}) do
     detect_child_pid(net_pid, Processes.NeuronsRepo)
   end
 
+  @doc """
+  Returns a PID of the connection manager server process.
+
+  ## Examples
+  
+  ```elixir
+  net = NeuronSystem.Net.create
+  NeuronSystem.Net.connection_manager(net)
+  # => #PID<0.107.0>
+  ```
+  """
   @spec connection_manager(Models.Net.t) :: pid | nil
   def connection_manager(%Models.Net{pid: net_pid}) do
     detect_child_pid(net_pid, Processes.ConnectionManager)
