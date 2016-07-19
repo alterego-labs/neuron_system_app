@@ -1,9 +1,11 @@
 defmodule NeuronSystem.Models.Neuron do
   defstruct [:activation_function, :id]
 
+  @type t :: %__MODULE__{}
+
   alias NeuronSystem.Utils.ProcessIdGenerator
 
-  # @spec build((... -> any)) :: __MODULE__.t
+  @spec build((... -> any)) :: __MODULE__.t
   def build(activation_function) do
     id = ProcessIdGenerator.call("neuron")
     %__MODULE__{

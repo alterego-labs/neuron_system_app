@@ -42,7 +42,7 @@ defmodule NeuronSystem.Utils.SpecHelper do
 
   ```elixir
   neuron_model = %NeuronSystem.Models.Neuron{id: "neuron:123123"}
-  NeuronSystem.Utils.SpecHelper.build_worker_spec(NeuronSystem.Models.Neuron, neuron_model, "neuron:123123")
+  NeuronSystem.Utils.SpecHelper.build_worker_spec(NeuronSystem.Models.Neuron, [neuron_model], "neuron:123123")
   # => {:ok,
   # => {"neuron:123123",
   # =>  {NeuronSystem.Processes.Neuron, :start_link,
@@ -65,6 +65,6 @@ defmodule NeuronSystem.Utils.SpecHelper do
   end
 
   def gen_process_id(suffix) do
-    (DateTime.utc_now |> DateTime.to_unix |> Integer.to_string) <> ":" <> suffix
+    NeuronSystem.Utils.ProcessIdGenerator.call(suffix)
   end
 end
