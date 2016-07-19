@@ -1,4 +1,8 @@
 defmodule NeuronSystem.Processes.NeuronsRepo do
+  @moduledoc """
+  Neurons registry for the concrete neuron Net.
+  """
+
   use GenServer
 
   alias NeuronSystem.Models
@@ -7,10 +11,27 @@ defmodule NeuronSystem.Processes.NeuronsRepo do
     GenServer.start_link(__MODULE__, %{})
   end
 
-  @spec handle_call({:add, Models.Neuron.t, pid}, any, list) :: any
-  def handle_call({:add, %Models.Neuron{id: worker_id}, pid}, _from, state) do
+  @doc """
+  Adds the given neuron to the registry.
+
+  ## Examples
+
+  ```elixir
+  neuron_model = Models.Neuron.build(activation_function)
+  {:ok, worker_spec} = NeuronSystem.Utils.SpecHelper.build_neuron_worker_spec(neuron_model)
+  {:ok, pid} = Supervisor.start_child(net_pid, worker_spec)
+  NeuronSystem.Processes.NeuronsRepo.add(repo_pid, {neuron_model, pid})
+  ```
+  """
+  @spec add(pid, {Models.Neuron.t, pid}) :: :ok
+  def add(repo_pid, {%Models.Neuron{} = neuron_model, pid}) do
+    GenServer.cast(repo_pid, {:add, neuron_model, pid})
+  end
+
+  @spec handle_call({:add, Models.Neuron.t, pid}, any, list) :: {:noreply, any}
+  def handle_cast({:add, %Models.Neuron{id: worker_id}, pid}, state) do
     new_state = Map.put(state, worker_id, pid)
-    {:reply, :ok, new_state}
+    {:noreply, new_state}
   end
 end
 

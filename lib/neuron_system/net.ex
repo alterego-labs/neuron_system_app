@@ -61,12 +61,17 @@ defmodule NeuronSystem.Net do
   # => %NeuronSystem.Models.Neuron{activation_function: #Function<20.54118792/0 in :erl_eval.expr/5>, id: "1468929430:neuron"}
   ```
   """
-  @spec add_neuron(Models.Net.t, (... -> any)) :: Models.Neuron.t
-  def add_neuron(%Models.Net{pid: net_pid}, activation_function) do
+  @spec add_neuron(Models.Net.t, (... -> any)) :: {:error, :no_neurons_repo} | {:ok, Models.Neuron.t}
+  def add_neuron(%Models.Net{pid: net_pid} = net, activation_function) do
     neuron_model = Models.Neuron.build(activation_function)
     {:ok, worker_spec} = build_neuron_worker_spec(neuron_model)
-    {:ok, _pid} = Supervisor.start_child(net_pid, worker_spec)
-    neuron_model
+    {:ok, pid} = Supervisor.start_child(net_pid, worker_spec)
+    case neurons_repo(net) do
+      nil -> {:error, :no_neurons_repo}
+      repo_pid ->
+        Processes.NeuronsRepo.add(repo_pid, {neuron_model, pid})
+        {:ok, neuron_model}
+    end
   end
 
   @doc """
