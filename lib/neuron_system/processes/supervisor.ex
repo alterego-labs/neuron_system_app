@@ -7,7 +7,6 @@ defmodule NeuronSystem.Processes.Supervisor do
 
   def init([]) do
     children = [
-      worker
     ]
     opts = [strategy: :one_for_all]
     supervise(children, opts)
