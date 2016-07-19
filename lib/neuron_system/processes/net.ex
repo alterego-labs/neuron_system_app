@@ -6,7 +6,9 @@ defmodule NeuronSystem.Processes.Net do
   end
 
   def init([]) do
-    children = []
+    children = [
+      worker(NeuronSystem.Processes.ConnectionManager, [], [])
+    ]
     supervise(children, strategy: :one_for_all)
   end
 end
