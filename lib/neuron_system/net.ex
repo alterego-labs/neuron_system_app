@@ -75,6 +75,21 @@ defmodule NeuronSystem.Net do
   end
 
   @doc """
+  Creates connection between two neurons with a given weight. Also registers just created connection
+  in a connection manager.
+  """
+  @spec add_connection(Models.Net.t, Models.Neuron.t, Models.Neuron.t, float) :: {:ok, Models.Connection.t} | {:error, :no_connection_manager}
+  def add_connection(%Models.Net{pid: net_pid} = net, %Models.Neuron{} = source_neuron, %Models.Neuron{} = target_neuron, weight) do
+    connection_model = Models.Connection.build(source_neuron, target_neuron, weight)
+    case connection_manager(net) do
+      nil -> {:error, :no_connection_manager}
+      manager_pid ->
+        Processes.ConnectionManager.add(manager_pid, connection_model)
+        {:ok, connection_model}
+    end
+  end
+
+  @doc """
   Returns a PID of the neurons repo server process.
 
   ## Examples
