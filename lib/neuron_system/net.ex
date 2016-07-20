@@ -79,7 +79,7 @@ defmodule NeuronSystem.Net do
   in a connection manager.
   """
   @spec add_connection(Models.Net.t, Models.Neuron.t, Models.Neuron.t, float) :: {:ok, Models.Connection.t} | {:error, :no_connection_manager}
-  def add_connection(%Models.Net{pid: net_pid} = net, %Models.Neuron{} = source_neuron, %Models.Neuron{} = target_neuron, weight) do
+  def add_connection(%Models.Net{} = net, %Models.Neuron{} = source_neuron, %Models.Neuron{} = target_neuron, weight) do
     connection_model = Models.Connection.build(source_neuron, target_neuron, weight)
     case connection_manager(net) do
       nil -> {:error, :no_connection_manager}

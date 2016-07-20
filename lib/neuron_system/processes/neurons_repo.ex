@@ -1,6 +1,9 @@
 defmodule NeuronSystem.Processes.NeuronsRepo do
   @moduledoc """
   Neurons registry for the concrete neuron Net.
+
+  This repo is different for each Net and it will be automatically started
+  after a new Net is created. Also the new repo will be added to the supervisor tree of the Net.
   """
 
   use GenServer

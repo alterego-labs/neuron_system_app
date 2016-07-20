@@ -1,6 +1,9 @@
 defmodule NeuronSystem.Models.Connection do
   @moduledoc """
   Represents a connection between neurons in a Net.
+
+  Also this module provides a struct which contains the all information about connected neurons and
+  its weight.
   """
 
   defstruct [:source_neuron, :target_neuron, :weight]
