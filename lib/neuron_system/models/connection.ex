@@ -13,7 +13,7 @@ defmodule NeuronSystem.Models.Connection do
   @type t :: %__MODULE__{}
 
   @doc """
-  Builds new connection between given neurons and with a concrete weight.
+  Builds a new connection between given neurons and with a concrete weight.
   """
   @spec build(Models.Neuron.t, Models.Neuron.t, float) :: Models.Connection.t
   def build(%Models.Neuron{id: source_id}, %Models.Neuron{id: target_id}, weight) do

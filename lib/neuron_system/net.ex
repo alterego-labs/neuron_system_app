@@ -26,6 +26,8 @@ defmodule NeuronSystem.Net do
 
   alias NeuronSystem.{Models, Processes}
 
+  @type connection_type :: :in | :out
+
   @doc """
   Creates new Neuron Net.
 
@@ -75,18 +77,26 @@ defmodule NeuronSystem.Net do
   end
 
   @doc """
-  Creates connection between two neurons with a given weight. Also registers just created connection
+  Creates a connection between two neurons with a given weight. Also registers just created connection
   in a connection manager.
   """
   @spec add_connection(Models.Net.t, Models.Neuron.t, Models.Neuron.t, float) :: {:ok, Models.Connection.t} | {:error, :no_connection_manager}
   def add_connection(%Models.Net{} = net, %Models.Neuron{} = source_neuron, %Models.Neuron{} = target_neuron, weight) do
-    connection_model = Models.Connection.build(source_neuron, target_neuron, weight)
-    case connection_manager(net) do
-      nil -> {:error, :no_connection_manager}
-      manager_pid ->
-        Processes.ConnectionManager.add(manager_pid, connection_model)
-        {:ok, connection_model}
-    end
+    Models.Connection.build(source_neuron, target_neuron, weight)
+    |> save_connection(net)
+  end
+
+  @doc """
+  Creates an input or output connection.
+  """
+  @spec add_connection(Models.Net.t, connection_type, Models.Neuron.t, float, atom) :: {:ok, Models.InConnection.t} | {:ok, Models.OutConnection.t} | {:error, :no_connection_manager}
+  def add_connection(%Models.Net{} = net, :in = _type, neuron, weight, key) do
+    Models.InConnection.build(neuron, weight, key)
+    |> save_connection(net)
+  end
+  def add_connection(%Models.Net{} = net, :out = _type, neuron, weight, key) do
+    Models.OutConnection.build(neuron, weight, key)
+    |> save_connection(net)
   end
 
   @doc """
@@ -130,6 +140,15 @@ defmodule NeuronSystem.Net do
       {_module, pid, _type, _opts} ->
         pid
       _ -> nil
+    end
+  end
+
+  defp save_connection(connection_model, %Models.Net{} = net) do
+    case connection_manager(net) do
+      nil -> {:error, :no_connection_manager}
+      manager_pid ->
+        Processes.ConnectionManager.add(manager_pid, connection_model)
+        {:ok, connection_model}
     end
   end
 end
