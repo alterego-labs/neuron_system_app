@@ -13,9 +13,9 @@ defmodule NeuronSystem.Models.InConnection do
   Builds a new input connection
   """
   @spec build(Models.Neuron.t, float, atom) :: __MODULE__.t
-  def build(neuron, weight, key) do
+  def build(%Models.Neuron{id: neuron_id}, weight, key) do
     %__MODULE__{
-      target_neuron: neuron,
+      target_neuron: neuron_id,
       weight: weight,
       key: key
     }
