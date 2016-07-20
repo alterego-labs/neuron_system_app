@@ -31,10 +31,22 @@ defmodule NeuronSystem.Processes.NeuronsRepo do
     GenServer.cast(repo_pid, {:add, neuron_model, pid})
   end
 
+  @doc """
+  Fetches an information about a neuron by its ID
+  """
+  @spec get(pid, binary) :: {pid, Models.Neuron.t}
+  def get(repo_id, neuron_id) do
+    GenServer.call(repo_pid, {:get, neuron_id})
+  end
+
   @spec handle_call({:add, Models.Neuron.t, pid}, any, list) :: {:noreply, any}
   def handle_cast({:add, %Models.Neuron{id: worker_id}, pid}, state) do
     new_state = Map.put(state, worker_id, pid)
     {:noreply, new_state}
+  end
+
+  def handle_call({:get, neuron_id}) do
+    
   end
 end
 
