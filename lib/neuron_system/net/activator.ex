@@ -1,6 +1,18 @@
 defmodule NeuronSystem.Net.Activator do
+  @moduledoc """
+  Net activator.
+
+  Encapsulates all logic which will be performed to start a Net:
+
+  1. Sends all income events to the appropriate neurons
+  2. Puts a bunch of `receive` blocks to collect outputs
+  """
+
   alias NeuronSystem.{Models, Processes}
 
+  @doc """
+  The main point for an activator.
+  """
   @spec call(Models.Net.t, map, pid) :: list
   def call(net, income, root_pid) do
     net |> send_in_events(income, root_pid)

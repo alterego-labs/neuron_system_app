@@ -1,6 +1,14 @@
 defmodule NeuronSystem.Utils.SendToNeuronProxy do
+  @moduledoc """
+  Encapsulates logic of a sending event from one neuron to another.
+  """
+
   alias NeuronSystem.{Models, Processes}
 
+  @doc """
+  Calls sending event processing
+  """
+  @spec call(Models.Net.t, Models.InConnection.t | Models.OutConnection.t | Models.Connection.t, float, pid) :: any
   def call(_net, %Models.OutConnection{} = connection, value, root_pid) do
     send root_pid, {:out_result, connection.key, value}
   end

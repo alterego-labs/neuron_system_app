@@ -58,6 +58,9 @@ defmodule NeuronSystem.Utils.SpecHelper do
     {:ok, worker_spec}
   end
 
+  @doc """
+  Builds a process specification for a supervisor.
+  """
   @spec build_supervisor_spec(module, list, binary) :: Supervisor.Spec.spec
   def build_supervisor_spec(module, args, id_suffix) do
     supervisor_id = id_suffix |> CommonHelper.gen_process_id
