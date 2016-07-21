@@ -63,10 +63,10 @@ defmodule NeuronSystem.Net do
   ```
   """
   @spec add_neuron(Models.Net.t, (... -> any)) :: {:ok, Models.Neuron.t}
-  def add_neuron(%Models.Net{pid: net_pid} = net, activation_function) do
+  def add_neuron(%Models.Net{pid: net_pid} = _net, activation_function) do
     neuron_model = Models.Neuron.build(activation_function)
     {:ok, worker_spec} = build_neuron_worker_spec(neuron_model)
-    {:ok, pid} = Supervisor.start_child(net_pid, worker_spec)
+    {:ok, _pid} = Supervisor.start_child(net_pid, worker_spec)
     {:ok, neuron_model}
   end
 
@@ -93,6 +93,11 @@ defmodule NeuronSystem.Net do
     |> save_connection(net)
   end
 
+  @spec neuron_process_pid(Models.Net.t, binary) :: pid
+  def neuron_process_pid(%Models.Net{pid: net_pid} = _net, neuron_id) do
+    detect_child_pid(net_pid, neuron_id)
+  end
+
   @doc """
   Returns a PID of the connection manager server process.
 
@@ -106,9 +111,13 @@ defmodule NeuronSystem.Net do
   """
   @spec connection_manager(Models.Net.t) :: pid | nil
   def connection_manager(%Models.Net{pid: net_pid}) do
+    detect_child_pid(net_pid, Processes.ConnectionManager)
+  end
+
+  defp detect_child_pid(net_pid, child_module) do
     worker_spec = Supervisor.which_children(net_pid)
                   |> Enum.find(fn({module, _pid, _type, _opts}) ->
-                    module == Processes.ConnectionManager
+                    module == child_module
                   end)
     case worker_spec do
       {_module, pid, _type, _opts} ->

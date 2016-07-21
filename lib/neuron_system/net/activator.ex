@@ -32,8 +32,9 @@ defmodule NeuronSystem.Net.Activator do
   end
 
   defp collect_result_for_connection(connection) do
+    connection_key = connection.key
     receive do
-      {:out_result, ^connection.key, value} -> value
+      {:out_result, connection_key, value} -> value
     end
   end
 end
