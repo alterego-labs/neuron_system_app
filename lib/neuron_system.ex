@@ -19,7 +19,7 @@ defmodule NeuronSystem do
   end
 
   def start_testing do
-    income = %{x1: 3}
+    income = %{x1: 1}
     net = NeuronSystem.Net.create
     {:ok, neuron1} = NeuronSystem.Net.add_neuron(net, fn
       x when x >= 0.5 -> 1
@@ -29,7 +29,6 @@ defmodule NeuronSystem do
       x when x >= 0.2 -> 1
       x when x < 0.2 -> 0
     end)
-    NeuronSystem.Net.add_connection(net, :in, neuron1, 0.3, :x1)
     NeuronSystem.Net.add_connection(net, :in, neuron1, 0.3, :x1)
     NeuronSystem.Net.add_connection(net, neuron1, neuron2, 0.2)
     NeuronSystem.Net.add_connection(net, :out, neuron2, 1.0, :y1)
