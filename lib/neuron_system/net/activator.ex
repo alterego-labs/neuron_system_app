@@ -10,7 +10,7 @@ defmodule NeuronSystem.Net.Activator do
   defp send_in_events(net, income, root_pid) do
     net
     |> net_in_connections
-    |> send_event(net, income, root_pid)
+    |> Enum.each(&send_event(&1, net, income, root_pid))
   end
 
   defp collect_net_results(net) do
@@ -41,7 +41,7 @@ defmodule NeuronSystem.Net.Activator do
   defp collect_result_for_connection(connection) do
     connection_key = connection.key
     receive do
-      {:out_result, connection_key, value} -> value
+      {:out_result, connection_key, value} -> {connection.key, value}
     end
   end
 end

@@ -114,6 +114,11 @@ defmodule NeuronSystem.Net do
     detect_child_pid(net_pid, Processes.ConnectionManager)
   end
 
+  @spec activate!(Models.Net.t, map) :: list
+  def activate!(net, income) do
+    NeuronSystem.Net.Activator.call(net, income, self())
+  end
+
   defp detect_child_pid(net_pid, child_module) do
     worker_spec = Supervisor.which_children(net_pid)
                   |> Enum.find(fn({module, _pid, _type, _opts}) ->

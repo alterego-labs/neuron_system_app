@@ -16,8 +16,8 @@ defmodule NeuronSystem.Processes.ConnectionManager do
   @doc """
   Adds a new connection to a connection manager
   """
-  @spec add(pid, Models.Connection.t) :: :ok
-  def add(manager_pid, %Models.Connection{} = connection_model) do
+  @spec add(pid, Models.Connection.t | Models.InConnection.t | Models.OutConnection.t) :: :ok
+  def add(manager_pid, connection_model) do
     GenServer.cast(manager_pid, {:add, connection_model})
   end
 
