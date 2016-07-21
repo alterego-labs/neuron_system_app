@@ -29,7 +29,7 @@ defmodule NeuronSystem.Processes.Neuron do
   """
   @spec set_activation_function(pid, (... -> any)) :: :ok
   def set_activation_function(pid, activation_function) do
-    GenServer.cast(pid, {:set_activation_function, activation_function}
+    GenServer.cast(pid, {:set_activation_function, activation_function})
   end
 
   @doc """
@@ -84,7 +84,7 @@ defmodule NeuronSystem.Processes.Neuron do
   end
 
   def handle_cast({:set_activation_function, activation_function}, {neuron_model, income_payloads}) do
-    new_neuron_model = Map.put(neuron_model, activation_function: activation_function)
+    new_neuron_model = Map.put(neuron_model, :activation_function, activation_function)
     {:noreply, {new_neuron_model, income_payloads}}
   end
 
