@@ -3,10 +3,17 @@ defmodule NeuronSystem.Net.Activator do
 
   @spec call(Models.Net.t, map, pid) :: list
   def call(net, income, root_pid) do
+    net |> send_in_events(income, root_pid)
+    net |> collect_net_results
+  end
+
+  defp send_in_events(net, income, root_pid) do
     net
     |> net_in_connections
     |> send_event(net, income, root_pid)
+  end
 
+  defp collect_net_results(net) do
     net
     |> net_out_connections
     |> collect_results
