@@ -18,8 +18,8 @@ defmodule NeuronSystem do
     Supervisor.start_link(children, opts)
   end
 
-  def start_testing do
-    income = %{x1: 1}
+  def start_testing(x1 \\ 1) do
+    income = %{x1: x1}
     net = NeuronSystem.Net.create
     {:ok, neuron1} = NeuronSystem.Net.add_neuron(net, fn
       x when x >= 0.5 -> 1

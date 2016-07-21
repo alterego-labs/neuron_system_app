@@ -93,6 +93,9 @@ defmodule NeuronSystem.Net do
     |> save_connection(net)
   end
 
+  @doc """
+  Returns a PID of a process for a given neuron in a given Net.
+  """
   @spec neuron_process_pid(Models.Net.t, binary) :: pid
   def neuron_process_pid(%Models.Net{pid: net_pid} = _net, neuron_id) do
     detect_child_pid(net_pid, neuron_id)
@@ -114,9 +117,25 @@ defmodule NeuronSystem.Net do
     detect_child_pid(net_pid, Processes.ConnectionManager)
   end
 
+  @doc """
+  Activates a whole Net with a given income.
+  """
   @spec activate!(Models.Net.t, map) :: list
   def activate!(net, income) do
     NeuronSystem.Net.Activator.call(net, income, self())
+  end
+
+  @doc """
+  Clears a given Net.
+
+  This operation means that an each neuron process's income payloads inbox will be cleaned up.
+  """
+  @spec clear(Models.Net.t) :: :ok
+  def clear(%Models.Net{pid: net_pid} = _net) do
+    Supervisor.which_children(net_pid)
+    |> Enum.find(fn({module, pid, _type, _opts}) when is_binary(module) ->
+      Processes.Neuron.clear_income_payloads(pid)
+    end)
   end
 
   defp detect_child_pid(net_pid, child_module) do
