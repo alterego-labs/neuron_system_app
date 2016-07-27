@@ -151,4 +151,4 @@ NeuronSystem.Net.activate!(net, income)
 ## Further ideas
 
 1. The main next goal - implement learning algorithm
-2. Add ability to create different types of the neurons using the high-level API
+2. ~~Add ability to create different types of the neurons using the high-level API~~

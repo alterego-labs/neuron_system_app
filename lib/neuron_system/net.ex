@@ -27,6 +27,8 @@ defmodule NeuronSystem.Net do
 
   @type connection_type :: :in | :out
 
+  @type neuron_type :: :perceptron | :sigmoid
+
   @doc """
   Creates new Neuron Net.
 
@@ -68,6 +70,34 @@ defmodule NeuronSystem.Net do
     {:ok, worker_spec} = build_neuron_worker_spec(neuron_model)
     {:ok, _pid} = Supervisor.start_child(net_pid, worker_spec)
     {:ok, neuron_model}
+  end
+
+  @doc """
+  Adds new predefined neuron type to the Net.
+
+  Please, check `neuron_type` type to know all available types.
+
+  ## Examples
+
+  ```elixir
+  {:ok, neuron_model} = NeuronSystem.Net.add_neuron(net, :perceptron, [threshold: 2])
+  
+  # or sigmoid neuron
+
+  {:ok, neuron_model2} = NeuronSystem.Net.add_neuron(net, :sigmoid, [threshold: 5])
+  ```
+  """
+  @spec add_neuron(Models.Net.t, neuron_type, [...]) :: {:ok, Models.Neuron.t}
+  def add_neuron(%Models.Net{pid: net_pid} = net, :perceptron, [threshold: threshold]) do
+    add_neuron(net, fn
+      x when x >= threshold -> 1
+      x when x < threshold -> 0
+    end)
+  end
+  def add_neuron(%Models.Net{pid: net_pid} = net, :sigmoid, [threshold: threshold]) do
+    add_neuron(net, fn(x)->
+      1 / (1 + :math.exp(x - threshold))
+    end)
   end
 
   @doc """
