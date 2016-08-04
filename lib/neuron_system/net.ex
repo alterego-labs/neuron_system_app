@@ -96,7 +96,7 @@ defmodule NeuronSystem.Net do
   end
   def add_neuron(%Models.Net{pid: net_pid} = net, :sigmoid, [threshold: threshold]) do
     add_neuron(net, fn(x)->
-      1 / (1 + :math.exp(x - threshold))
+      1 / (1 + :math.exp(x * (-1) + threshold))
     end)
   end
 
