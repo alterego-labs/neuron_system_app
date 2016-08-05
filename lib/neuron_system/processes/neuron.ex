@@ -25,14 +25,6 @@ defmodule NeuronSystem.Processes.Neuron do
   end
 
   @doc """
-  Sets a new activation function for a given neuron process
-  """
-  @spec set_activation_function(pid, (... -> any)) :: :ok
-  def set_activation_function(pid, activation_function) do
-    GenServer.cast(pid, {:set_activation_function, activation_function})
-  end
-
-  @doc """
   Clears an income payloads inbox.
 
   Is very useful when you in a runtime change parameters of a some neurons and want to activate
@@ -75,11 +67,6 @@ defmodule NeuronSystem.Processes.Neuron do
     end
     new_state = {neuron_model, new_income_payloads}
     {:noreply, new_state}
-  end
-
-  def handle_cast({:set_activation_function, activation_function}, {neuron_model, income_payloads}) do
-    new_neuron_model = Map.put(neuron_model, :activation_function, activation_function)
-    {:noreply, {new_neuron_model, income_payloads}}
   end
 
   def handle_cast(:clear_income_payloads, {neuron_model, _income_payloads}) do
