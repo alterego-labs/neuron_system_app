@@ -17,14 +17,6 @@ defmodule NeuronSystem.Processes.Neuron do
   # Public API
 
   @doc """
-  Fetches a neuron model struct from a concrete neuron process.
-  """
-  @spec get_model(pid) :: NeuronSystem.Models.Neuron.t
-  def get_model(pid) do
-    GenServer.call(pid, :get_model)
-  end
-
-  @doc """
   Clears an income payloads inbox.
 
   Is very useful when you in a runtime change parameters of a some neurons and want to activate
@@ -47,10 +39,6 @@ defmodule NeuronSystem.Processes.Neuron do
   end
 
   # Callbacks
-
-  def handle_call(:get_model, _from, {neuron_model, _income_payloads} = state) do
-    {:reply, neuron_model, state}
-  end
 
   def handle_cast({:income_payload, source_neuron_id, value, net, root_pid}, {%Models.Neuron{id: neuron_id, activation_function: activation_function} = neuron_model, income_payloads} = _state) do
     new_income_payloads = Map.put(income_payloads, source_neuron_id, value)
