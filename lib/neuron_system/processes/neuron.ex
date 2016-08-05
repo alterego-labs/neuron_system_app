@@ -60,12 +60,6 @@ defmodule NeuronSystem.Processes.Neuron do
     {:reply, neuron_model, state}
   end
 
-  def handle_call({:activate, args}, _from, {neuron_model, _income_payloads} = state) do
-    %{activation_function: activation_function} = neuron_model
-    result = apply(activation_function, args)
-    {:reply, result, state}
-  end
-
   def handle_cast({:income_payload, source_neuron_id, value, net, root_pid}, {%Models.Neuron{id: neuron_id, activation_function: activation_function} = neuron_model, income_payloads} = _state) do
     new_income_payloads = Map.put(income_payloads, source_neuron_id, value)
     payloads_count = Map.keys(new_income_payloads) |> Enum.count

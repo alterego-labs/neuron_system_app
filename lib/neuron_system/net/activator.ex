@@ -25,25 +25,25 @@ defmodule NeuronSystem.Net.Activator do
     |> Enum.each(&send_event(&1, net, income, root_pid))
   end
 
+  defp net_in_connections(%Models.Net{} = net) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_net_in_connections
+  end
+
+  defp send_event(connection, net, income, root_pid) do
+    value = income[connection.key]
+    NeuronSystem.Utils.SendToNeuronProxy.call(net, connection, value, root_pid)
+  end
+
   defp collect_net_results(net) do
     net
     |> net_out_connections
     |> collect_results
   end
 
-  defp net_in_connections(%Models.Net{} = net) do
-    NeuronSystem.Net.connection_manager(net)
-    |> Processes.ConnectionManager.get_net_in_connections
-  end
-
   defp net_out_connections(%Models.Net{} = net) do
     NeuronSystem.Net.connection_manager(net)
     |> Processes.ConnectionManager.get_net_out_connections
-  end
-
-  defp send_event(connection, net, income, root_pid) do
-    value = income[connection.key]
-    NeuronSystem.Utils.SendToNeuronProxy.call(net, connection, value, root_pid)
   end
 
   defp collect_results(connections) do

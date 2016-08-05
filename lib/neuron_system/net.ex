@@ -88,13 +88,13 @@ defmodule NeuronSystem.Net do
   ```
   """
   @spec add_neuron(Models.Net.t, neuron_type, [...]) :: {:ok, Models.Neuron.t}
-  def add_neuron(%Models.Net{pid: net_pid} = net, :perceptron, [threshold: threshold]) do
+  def add_neuron(%Models.Net{} = net, :perceptron, [threshold: threshold]) do
     add_neuron(net, fn
       x when x >= threshold -> 1
       x when x < threshold -> 0
     end)
   end
-  def add_neuron(%Models.Net{pid: net_pid} = net, :sigmoid, [threshold: threshold]) do
+  def add_neuron(%Models.Net{} = net, :sigmoid, [threshold: threshold]) do
     add_neuron(net, fn(x)->
       1 / (1 + :math.exp(x * (-1) + threshold))
     end)
