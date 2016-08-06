@@ -12,7 +12,7 @@ defmodule NeuronSystem.Processes.Neuron do
 
   @spec start_link(NeuronSystem.Models.Neuron.t) :: any
   def start_link(neuron_model) do
-    GenServer.start_link(__MODULE__, {neuron_model, %{}})
+    GenServer.start_link(__MODULE__, {neuron_model, %{income_payloads: %{}}})
   end
 
   # Public API
@@ -34,15 +34,17 @@ defmodule NeuronSystem.Processes.Neuron do
   This event means that some neuron from the previous layer was activated and sent its value to
   a next layer.
   """
-  @spec income_payload(pid, {binary, float, Models.Net.t, pid}) :: :ok
-  def income_payload(pid, {source_neuron_id, value, net, root_pid}) do
-    GenServer.cast(pid, {:income_payload, source_neuron_id, value, net, root_pid})
+  @spec income_payload(pid, {binary, float, Models.Net.t}) :: :ok
+  def income_payload(pid, {source_neuron_id, value, net}) do
+    GenServer.cast(pid, {:income_payload, source_neuron_id, value, net})
   end
 
   # Callbacks
 
-  def handle_cast({:income_payload, source_neuron_id, value, net, root_pid}, state) do
-    new_state = NeuronSystem.Utils.NeuronIncomePayloadProcessor.call({source_neuron_id, value, net, root_pid}, state)
+  def handle_cast({:income_payload, source_neuron_id, value, net}, state) do
+    new_state = NeuronSystem.Utils.NeuronIncomePayloadProcessor.call(
+      source_neuron_id, value, net, state
+    )
     {:noreply, new_state}
   end
 

@@ -50,7 +50,7 @@ defmodule NeuronSystem.Net do
       "net_process"
     )
     {:ok, pid} = Supervisor.start_child(NeuronSystem.Supervisor, supervisor_spec)
-    %Models.Net{pid: pid}
+    %Models.Net{pid: pid, root_pid: self()}
   end
 
   @doc """
@@ -152,7 +152,7 @@ defmodule NeuronSystem.Net do
   """
   @spec activate!(Models.Net.t, map) :: list
   def activate!(net, income) do
-    NeuronSystem.Net.Activator.call(net, income, self())
+    NeuronSystem.Net.Activator.call(net, income)
   end
 
   @doc """

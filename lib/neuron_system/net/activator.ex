@@ -13,16 +13,16 @@ defmodule NeuronSystem.Net.Activator do
   @doc """
   The main point for an activator.
   """
-  @spec call(Models.Net.t, map, pid) :: list
-  def call(net, income, root_pid) do
-    net |> send_in_events(income, root_pid)
+  @spec call(Models.Net.t, map) :: list
+  def call(%Models.Net{} = net, income) do
+    net |> send_in_events(income)
     net |> collect_net_results
   end
 
-  defp send_in_events(net, income, root_pid) do
+  defp send_in_events(net, income) do
     net
     |> net_in_connections
-    |> Enum.each(&send_event(&1, net, income, root_pid))
+    |> Enum.each(&send_event(&1, net, income))
   end
 
   defp net_in_connections(%Models.Net{} = net) do
@@ -30,9 +30,9 @@ defmodule NeuronSystem.Net.Activator do
     |> Processes.ConnectionManager.get_net_in_connections
   end
 
-  defp send_event(connection, net, income, root_pid) do
+  defp send_event(connection, net, income) do
     value = income[connection.key]
-    NeuronSystem.Utils.SendToNeuronProxy.call(net, connection, value, root_pid)
+    NeuronSystem.Utils.SendToNeuronProxy.call(net, connection, value)
   end
 
   defp collect_net_results(net) do
