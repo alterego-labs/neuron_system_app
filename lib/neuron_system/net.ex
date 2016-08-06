@@ -21,6 +21,8 @@ defmodule NeuronSystem.Net do
    ```
   """
 
+  use NeuronSystem.BackProp.Net
+
   import NeuronSystem.Utils.SpecHelper
 
   alias NeuronSystem.{Models, Processes}

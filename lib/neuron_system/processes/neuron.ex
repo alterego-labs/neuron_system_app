@@ -6,7 +6,7 @@ defmodule NeuronSystem.Processes.Neuron do
   """
 
   use GenServer
-  # use NeuronSystem.BackProp.Processes.Neuron
+  use NeuronSystem.BackProp.Processes.Neuron
 
   alias NeuronSystem.{Models, Processes, Utils}
 
