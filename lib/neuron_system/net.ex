@@ -188,6 +188,25 @@ defmodule NeuronSystem.Net do
     |> Processes.ConnectionManager.get_net_in_connections
   end
 
+  @doc """
+  Fetches out connections for the given neuron in the Net
+  """
+  @spec neuron_out_connections(Models.Net.t, bitstring) :: list
+  def neuron_out_connections(%Models.Net{pid: net_pid} = net, neuron_id) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_neuron_out_connections(neuron_id)
+  end
+
+  @doc """
+  Changes a weight of a given connection and saves it in a connection manager.
+  """
+  @spec set_connection_weight(Models.Net.t, Models.InConnection.t | Models.OutConnection.t | Models.Connection.t, float) :: :ok
+  def set_connection_weight(net, connection, new_weight) do
+    net
+    |> connection_manager
+    |> Processes.ConnectionManager.change_weight(connection.id, new_weight)
+  end
+
   defp detect_child_pid(net_pid, child_module) do
     worker_spec = Supervisor.which_children(net_pid)
                   |> Enum.find(fn({module, _pid, _type, _opts}) ->
