@@ -19,7 +19,7 @@ defmodule NeuronSystem.BackProp.Utils.BackPropRunner do
     neuron_id = connection.source_neuron
     neuron_process_pid = NeuronSystem.Net.neuron_process_pid(net, neuron_id)
     needed_output = valid_output[connection.key]
-    Processes.Neuron.back_prop(neuron_process_pid, {:output, needed_output})
+    Processes.Neuron.back_prop(neuron_process_pid, {:output, net, needed_output})
   end
 
   defp collect_results(net) do
