@@ -9,7 +9,7 @@ defmodule NeuronSystem.BackProp.Processes.Neuron do
         GenServer.cast(pid, {:back_prop, :hidden})
       end
 
-      def handle_cast({:back_prop, :output, valid_output}, state) do
+      def handle_cast({:back_prop, :output, valid_output}, {neuron_model, options}) do
       end
 
       def handle_cast({:back_prop, :hidden}, state) do

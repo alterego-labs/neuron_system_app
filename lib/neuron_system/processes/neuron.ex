@@ -12,7 +12,12 @@ defmodule NeuronSystem.Processes.Neuron do
 
   @spec start_link(NeuronSystem.Models.Neuron.t) :: any
   def start_link(neuron_model) do
-    GenServer.start_link(__MODULE__, {neuron_model, %{income_payloads: %{}}})
+    options = %{
+      income_payloads: %{},
+      out_value: nil,
+      d_out_value: nil
+    }
+    GenServer.start_link(__MODULE__, {neuron_model, options})
   end
 
   # Public API

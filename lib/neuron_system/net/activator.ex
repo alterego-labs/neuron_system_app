@@ -21,13 +21,8 @@ defmodule NeuronSystem.Net.Activator do
 
   defp send_in_events(net, income) do
     net
-    |> net_in_connections
+    |> NeuronSystem.Net.in_connections
     |> Enum.each(&send_event(&1, net, income))
-  end
-
-  defp net_in_connections(%Models.Net{} = net) do
-    NeuronSystem.Net.connection_manager(net)
-    |> Processes.ConnectionManager.get_net_in_connections
   end
 
   defp send_event(connection, net, income) do
@@ -37,13 +32,8 @@ defmodule NeuronSystem.Net.Activator do
 
   defp collect_net_results(net) do
     net
-    |> net_out_connections
+    |> NeuronSystem.Net.out_connections
     |> collect_results
-  end
-
-  defp net_out_connections(%Models.Net{} = net) do
-    NeuronSystem.Net.connection_manager(net)
-    |> Processes.ConnectionManager.get_net_out_connections
   end
 
   defp collect_results(connections) do

@@ -170,6 +170,24 @@ defmodule NeuronSystem.Net do
     end)
   end
 
+  @doc """
+  Detects and returns net's output connections list
+  """
+  @spec out_connections(Models.Net.t) :: list
+  def out_connections(%Models.Net{pid: net_pid} = net) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_net_out_connections
+  end
+
+  @doc """
+  Detects and returns net's input connections list
+  """
+  @spec in_connections(Models.Net.t) :: list
+  def in_connections(%Models.Net{pid: net_pid} = net) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_net_in_connections
+  end
+
   defp detect_child_pid(net_pid, child_module) do
     worker_spec = Supervisor.which_children(net_pid)
                   |> Enum.find(fn({module, _pid, _type, _opts}) ->
