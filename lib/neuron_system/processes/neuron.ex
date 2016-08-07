@@ -53,7 +53,8 @@ defmodule NeuronSystem.Processes.Neuron do
     {:noreply, new_state}
   end
 
-  def handle_cast(:clear_income_payloads, {neuron_model, _income_payloads}) do
-    {:noreply, {neuron_model, %{}}}
+  def handle_cast(:clear_income_payloads, {neuron_model, options}) do
+    new_options = options |> Map.put(:income_payloads, %{})
+    {:noreply, {neuron_model, new_options}}
   end
 end
