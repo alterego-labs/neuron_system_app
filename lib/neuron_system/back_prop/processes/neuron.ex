@@ -10,10 +10,8 @@ defmodule NeuronSystem.BackProp.Processes.Neuron do
       end
 
       def handle_cast({:back_prop, :output, net, valid_output}, {_neuron_model, _options} = state) do
-        new_state = NeuronSystem.BackProp.Neuron.OutputProcessor.call(
-          net, valid_output, state
-        )
-        {:noreply, new_state}
+        NeuronSystem.BackProp.Neuron.OutputProcessor.call(net, valid_output, state)
+        {:noreply, state}
       end
 
       def handle_cast({:back_prop, :hidden}, state) do

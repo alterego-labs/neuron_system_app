@@ -29,6 +29,7 @@ defmodule NeuronSystem.BackProp.Neuron.OutputProcessor do
       NeuronSystem.Net.set_connection_weight(net, connection, new_w)
       send_back_prop_inside(net, connection, lapse)
     end)
+
   end
 
   defp calc_lapse(valid_output, options) do
