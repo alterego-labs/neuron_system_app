@@ -1,6 +1,12 @@
 defmodule NeuronSystem.BackProp.Utils.BackPropRunner do
   @moduledoc """
+  Contains logic to start Back Propagation learning algorithm.
 
+  From very superficial sight an algorithm steps are:
+
+  1. Detect output connection of a Net
+  2. Send to each output neuron a message with a needed value inside
+  3. Put a receive to wait for learning end
   """
 
   alias NeuronSystem.{Models, Processes}
