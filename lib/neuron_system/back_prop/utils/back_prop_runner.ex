@@ -1,6 +1,13 @@
 defmodule NeuronSystem.BackProp.Utils.BackPropRunner do
+  @moduledoc """
+
+  """
+
   alias NeuronSystem.{Models, Processes}
 
+  @doc """
+  Starts back propagation learning procedure for a specific Net using a some pair from a learning set.
+  """
   @spec call(NeuronSystem.Models.Net.t, map) :: :ok
   def call(%Models.Net{} = net, valid_output) do
     net
