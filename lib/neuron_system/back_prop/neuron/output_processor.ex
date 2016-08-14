@@ -27,9 +27,8 @@ defmodule NeuronSystem.BackProp.Neuron.OutputProcessor do
       new_w = Utils.Calculations.new_weight(connection.weight, delta_w)
       connection_lapse = Utils.Calculations.connection_lapse(lapse, connection.weight)
       NeuronSystem.Net.set_connection_weight(net, connection, new_w)
-      send_back_prop_inside(net, connection, lapse)
+      send_back_prop_inside(net, neuron_id, connection, connection_lapse)
     end)
-
   end
 
   defp calc_lapse(valid_output, options) do
@@ -43,9 +42,9 @@ defmodule NeuronSystem.BackProp.Neuron.OutputProcessor do
     income_payloads[connection_source]
   end
 
-  defp send_back_prop_inside(net, connection, lapse) do
+  defp send_back_prop_inside(net, neuron_id, connection, lapse) do
     connection_source = NeuronSystem.Connection.source(connection)
     neuron_process_pid = NeuronSystem.Net.neuron_process_pid(net, connection_source)
-    Processes.Neuron.back_prop(neuron_process_pid, {:hidden, net, lapse})
+    Processes.Neuron.back_prop(neuron_process_pid, {:hidden, net, neuron_id, lapse})
   end
 end

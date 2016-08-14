@@ -7,7 +7,7 @@ defmodule NeuronSystem.BackProp.Processes.Neuron do
 
   defmacro __using__(opts \\ :empty) do
     quote do
-      @spec back_prop(pid, {:output, float} | {:hidden}) :: :ok
+      @spec back_prop(pid, {:output | :hidden, NeuronSystem.Models.Net.t, float}) :: :ok
       def back_prop(pid, {:output, net, valid_output}) do
         GenServer.cast(pid, {:back_prop, :output, net, valid_output})
       end
@@ -15,12 +15,14 @@ defmodule NeuronSystem.BackProp.Processes.Neuron do
         GenServer.cast(pid, {:back_prop, :hidden, net, lapse})
       end
 
-      def handle_cast({:back_prop, :output, net, valid_output}, {_neuron_model, _options} = state) do
+      def handle_cast({:back_prop, :output, net, valid_output}, state) do
         NeuronSystem.BackProp.Neuron.OutputProcessor.call(net, valid_output, state)
         {:noreply, state}
       end
 
-      def handle_cast({:back_prop, :hidden}, state) do
+      def handle_cast({:back_prop, :hidden, net, from_neuron_id, lapse}, state) do
+        new_state = NeuronSystem.BackProp.Neuron.HiddenProcessor.call(net, from_neuron_id, lapse, state)
+        {:noreply, state}
       end
     end
   end
