@@ -174,7 +174,7 @@ defmodule NeuronSystem.Net do
   Detects and returns net's output connections list
   """
   @spec out_connections(Models.Net.t) :: list
-  def out_connections(%Models.Net{pid: net_pid} = net) do
+  def out_connections(%Models.Net{} = net) do
     NeuronSystem.Net.connection_manager(net)
     |> Processes.ConnectionManager.get_net_out_connections
   end
@@ -183,7 +183,7 @@ defmodule NeuronSystem.Net do
   Detects and returns net's input connections list
   """
   @spec in_connections(Models.Net.t) :: list
-  def in_connections(%Models.Net{pid: net_pid} = net) do
+  def in_connections(%Models.Net{} = net) do
     NeuronSystem.Net.connection_manager(net)
     |> Processes.ConnectionManager.get_net_in_connections
   end
@@ -192,9 +192,18 @@ defmodule NeuronSystem.Net do
   Fetches out connections for the given neuron in the Net
   """
   @spec neuron_out_connections(Models.Net.t, bitstring) :: list
-  def neuron_out_connections(%Models.Net{pid: net_pid} = net, neuron_id) do
+  def neuron_out_connections(%Models.Net{} = net, neuron_id) do
     NeuronSystem.Net.connection_manager(net)
     |> Processes.ConnectionManager.get_neuron_out_connections(neuron_id)
+  end
+
+  @doc """
+  Fetches in connections for the given neuron in the Net
+  """
+  @spec neuron_in_connections(Models.Net.t, bitstring) :: list
+  def neuron_in_connections(%Models.Net{} = net, neuron_id) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_neuron_in_connections(neuron_id)
   end
 
   @doc """

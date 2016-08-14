@@ -61,11 +61,6 @@ defmodule NeuronSystem.Processes.ConnectionManager do
     GenServer.cast(manager_pid, {:change_weight, connection_id, new_weight})
   end
 
-  def handle_cast({:add, connection}, state) do
-    new_state = [connection | state]
-    {:noreply, new_state}
-  end
-
   def handle_call({:get_net_in_out, :in = _type}, _from, state) do
     connections = state |> filter_by_type(Models.InConnection)
     {:reply, connections, state}
@@ -84,8 +79,12 @@ defmodule NeuronSystem.Processes.ConnectionManager do
     {:reply, connections, state} 
   end
 
+  def handle_cast({:add, connection}, state) do
+    new_state = [connection | state]
+    {:noreply, new_state}
+  end
   def handle_cast({:change_weight, connection_id, new_weight}, state) do
-    connection = state |> Enum.filter(&(&1.id == connection_id)) |> Enum.first
+    connection = state |> Enum.filter(&(&1.id == connection_id)) |> Enum.at(0)
     other_connections = state |> Enum.filter(&(&1.id != connection_id))
     new_connection = %{connection | weight: new_weight}
     {:noreply, [new_connection | other_connections]}

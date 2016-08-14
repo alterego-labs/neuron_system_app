@@ -7,6 +7,7 @@ defmodule NeuronSystem.BackProp.Neuron.HiddenProcessor do
     neuron_out_connections = NeuronSystem.Net.neuron_out_connections(net, neuron_id) 
     if received_all?(new_options, neuron_out_connections) do
       lapse = calc_overall_lapse(new_options)
+      income_payloads = options |> Map.get(:income_payloads)
       neuron_in_connections = NeuronSystem.Net.neuron_in_connections(net, neuron_id)
       neuron_in_connections |> Enum.each(fn(connection) ->
         connection_income = fetch_income_for_connection(connection, income_payloads)
@@ -38,18 +39,23 @@ defmodule NeuronSystem.BackProp.Neuron.HiddenProcessor do
     income_count == connections_count
   end
 
+  defp fetch_income_for_connection(connection, income_payloads) do
+    connection_source = NeuronSystem.Connection.source(connection)
+    income_payloads[connection_source]
+  end
+
   defp calc_overall_lapse(%{income_lapse: income_lapse} = _options) do
     income_lapse |> Map.values |> Enum.sum
   end
 
-  defp send_back_prop_inside(net, neuron_id, connection, connection_lapse) do
+  defp send_back_prop_inside(net, neuron_id, connection, lapse) do
     connection_source = NeuronSystem.Connection.source(connection)
     neuron_process_pid = NeuronSystem.Net.neuron_process_pid(net, connection_source)
     Processes.Neuron.back_prop(neuron_process_pid, {:hidden, net, neuron_id, lapse})
   end
 
   defp at_least_one_is_in_connection?(connections) do
-    Enum.any?(neuron_in_connections, fn
+    Enum.any?(connections, fn
       (%Models.InConnection{} = conn) -> true
       _ -> false
     end)
