@@ -56,7 +56,7 @@ defmodule NeuronSystem.BackProp.Neuron.HiddenProcessor do
 
   defp at_least_one_is_in_connection?(connections) do
     Enum.any?(connections, fn
-      (%Models.InConnection{} = conn) -> true
+      (%Models.InConnection{} = _conn) -> true
       _ -> false
     end)
   end
