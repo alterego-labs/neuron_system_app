@@ -171,6 +171,15 @@ defmodule NeuronSystem.Net do
   end
 
   @doc """
+  Detects and returns the whole connections in a Net
+  """
+  @spec get_all_connections(Models.Net.t) :: list
+  def get_all_connections(%Models.Net{} = net) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_all
+  end
+
+  @doc """
   Detects and returns net's output connections list
   """
   @spec out_connections(Models.Net.t) :: list
