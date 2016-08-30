@@ -8,7 +8,7 @@ defmodule NeuronSystem.Net.Activator do
   2. Puts a bunch of `receive` blocks to collect outputs
   """
 
-  alias NeuronSystem.{Models, Processes}
+  alias NeuronSystem.{Models}
 
   @doc """
   The main point for an activator.
@@ -43,7 +43,7 @@ defmodule NeuronSystem.Net.Activator do
   defp collect_result_for_connection(connection) do
     connection_key = connection.key
     receive do
-      {:out_result, connection_key, value} -> {connection.key, value}
+      {:out_result, ^connection_key, value} -> {connection.key, value}
     end
   end
 end

@@ -11,7 +11,7 @@ defmodule NeuronSystem.Utils.SendToNeuronProxyTest do
     value = 10
     NeuronSystem.Utils.SendToNeuronProxy.call(net, connection, value)
     receive do
-      {:out_result, :y1, ^value} -> assert true
+      {:out_result, :y1, out_value} -> assert value == out_value
     after
       1_000 -> assert false
     end
