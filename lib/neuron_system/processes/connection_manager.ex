@@ -22,6 +22,14 @@ defmodule NeuronSystem.Processes.ConnectionManager do
   end
 
   @doc """
+  Gets the list of all connections and returns it
+  """
+  @spec get_all(pid) :: list
+  def get_all(manager_pid) do
+    GenServer.call(manager_pid, :get_all)
+  end
+
+  @doc """
   Gets a list of all input connection for a whole Net
   """
   @spec get_net_in_connections(pid) :: list(Models.InConnection.t)
@@ -53,11 +61,17 @@ defmodule NeuronSystem.Processes.ConnectionManager do
     GenServer.call(manager_pid, {:get_neuron_in_out, :out, neuron_id})
   end
 
-  def handle_cast({:add, connection}, state) do
-    new_state = [connection | state]
-    {:noreply, new_state}
+  @doc """
+  Changes weight of the specific connection
+  """
+  @spec change_weight(pid, bitstring, float) :: :ok
+  def change_weight(manager_pid, connection_id, new_weight) do
+    GenServer.cast(manager_pid, {:change_weight, connection_id, new_weight})
   end
 
+  def handle_call(:get_all, _from, state) do
+    {:reply, state, state}
+  end
   def handle_call({:get_net_in_out, :in = _type}, _from, state) do
     connections = state |> filter_by_type(Models.InConnection)
     {:reply, connections, state}
@@ -74,6 +88,17 @@ defmodule NeuronSystem.Processes.ConnectionManager do
   def handle_call({:get_neuron_in_out, :out = _type, neuron_id}, _from, state) do
     connections = state |> filter_by_source_neuron(neuron_id)
     {:reply, connections, state} 
+  end
+
+  def handle_cast({:add, connection}, state) do
+    new_state = [connection | state]
+    {:noreply, new_state}
+  end
+  def handle_cast({:change_weight, connection_id, new_weight}, state) do
+    connection = state |> Enum.filter(&(&1.id == connection_id)) |> Enum.at(0)
+    other_connections = state |> Enum.filter(&(&1.id != connection_id))
+    new_connection = %{connection | weight: new_weight}
+    {:noreply, [new_connection | other_connections]}
   end
 
   defp filter_by_type(collection, module) do

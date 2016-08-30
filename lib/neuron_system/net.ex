@@ -21,6 +21,8 @@ defmodule NeuronSystem.Net do
    ```
   """
 
+  use NeuronSystem.BackProp.Net
+
   import NeuronSystem.Utils.SpecHelper
 
   alias NeuronSystem.{Models, Processes}
@@ -50,7 +52,7 @@ defmodule NeuronSystem.Net do
       "net_process"
     )
     {:ok, pid} = Supervisor.start_child(NeuronSystem.Supervisor, supervisor_spec)
-    %Models.Net{pid: pid}
+    %Models.Net{pid: pid, root_pid: self()}
   end
 
   @doc """
@@ -152,7 +154,7 @@ defmodule NeuronSystem.Net do
   """
   @spec activate!(Models.Net.t, map) :: list
   def activate!(net, income) do
-    NeuronSystem.Net.Activator.call(net, income, self())
+    NeuronSystem.Net.Activator.call(net, income)
   end
 
   @doc """
@@ -166,6 +168,61 @@ defmodule NeuronSystem.Net do
     |> Enum.find(fn({module, pid, _type, _opts}) when is_binary(module) ->
       Processes.Neuron.clear_income_payloads(pid)
     end)
+  end
+
+  @doc """
+  Detects and returns the whole connections in a Net
+  """
+  @spec get_all_connections(Models.Net.t) :: list
+  def get_all_connections(%Models.Net{} = net) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_all
+  end
+
+  @doc """
+  Detects and returns net's output connections list
+  """
+  @spec out_connections(Models.Net.t) :: list
+  def out_connections(%Models.Net{} = net) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_net_out_connections
+  end
+
+  @doc """
+  Detects and returns net's input connections list
+  """
+  @spec in_connections(Models.Net.t) :: list
+  def in_connections(%Models.Net{} = net) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_net_in_connections
+  end
+
+  @doc """
+  Fetches out connections for the given neuron in the Net
+  """
+  @spec neuron_out_connections(Models.Net.t, bitstring) :: list
+  def neuron_out_connections(%Models.Net{} = net, neuron_id) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_neuron_out_connections(neuron_id)
+  end
+
+  @doc """
+  Fetches in connections for the given neuron in the Net
+  """
+  @spec neuron_in_connections(Models.Net.t, bitstring) :: list
+  def neuron_in_connections(%Models.Net{} = net, neuron_id) do
+    NeuronSystem.Net.connection_manager(net)
+    |> Processes.ConnectionManager.get_neuron_in_connections(neuron_id)
+  end
+
+  @doc """
+  Changes a weight of a given connection and saves it in a connection manager.
+  """
+  @spec set_connection_weight(Models.Net.t, Models.InConnection.t | Models.OutConnection.t | Models.Connection.t, float) :: :ok
+  def set_connection_weight(net, connection, new_weight) do
+    net
+    |> connection_manager
+    |> Processes.ConnectionManager.change_weight(connection.id, new_weight)
   end
 
   defp detect_child_pid(net_pid, child_module) do

@@ -5,5 +5,5 @@ defmodule NeuronSystem.Models.Net do
   Contains the only one value - the PID of the supervisor process of the Net.
   """
 
-  defstruct [:pid]
+  defstruct [:pid, :root_pid]
 end

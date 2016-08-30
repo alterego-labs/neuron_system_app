@@ -29,8 +29,9 @@ defmodule NeuronSystem.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ex_doc, "~> 0.13", only: :dev},
-      { :uuid, "~> 1.1.4" }
+      { :ex_doc, "~> 0.13", only: :dev },
+      { :uuid, "~> 1.1.4" },
+      { :mock, github: "jjh42/mock", ref: "7f2251f781f646a08bb65c85c215f107c9627435" }
     ]
   end
 end
