@@ -30,7 +30,7 @@ defmodule NeuronSystem.Mixfile do
   defp deps do
     [
       {:ex_doc, "~> 0.13", only: :dev},
-      { :uuid, "~> 1.1.4" }
+      { :uuid, "~> 1.1.8" }
     ]
   end
 end
